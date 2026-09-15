@@ -2,12 +2,16 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 local act = wezterm.action
 
+-- Reload this configuration whenever the file is saved.
+config.automatically_reload_config = true
+
+-- Make the window slightly transparent.
 config.window_background_opacity = 0.9
 
 ----------------------------------------------------
--- Tab
+-- Tab bar
 ----------------------------------------------------
--- Hide the native title bar while keeping resize handles.
+-- Hide the native title bar while retaining resize handles.
 config.window_decorations = 'RESIZE'
 
 -- Blend the tab bar into the window background.
@@ -16,18 +20,29 @@ config.window_frame = {
   active_titlebar_bg = 'none',
 }
 
+-- Use black as the tab bar background.
 config.window_background_gradient = {
   colors = { '#000000' },
 }
 
+-- Hide the default border between inactive tabs; the custom arrows handle separation.
+config.colors = {
+  tab_bar = {
+    inactive_tab_edge = 'none',
+  },
+}
+
 -- Keep tab creation keyboard-driven.
 config.show_new_tab_button_in_tab_bar = false
+-- Hide the close button shown in each tab (nightly builds only).
+config.show_close_tab_button_in_tabs = false
 
 -- Powerline-style tab separators.
 local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
 local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
 
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+  -- Choose the color according to whether the tab is active.
   local background = '#5c6d74'
   local foreground = '#FFFFFF'
   local edge_background = 'none'
@@ -36,6 +51,7 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
     background = '#ae8b2d'
   end
 
+  -- Pad and truncate the pane title so it fits in the tab bar.
   local title = '   ' .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. '   '
 
   return {
@@ -52,8 +68,9 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
 end)
 
 ----------------------------------------------------
--- Keybinds
+-- Key bindings
 ----------------------------------------------------
+-- Use only the key bindings defined below.
 config.disable_default_key_bindings = true
 
 config.keys = {
@@ -100,7 +117,7 @@ config.keys = {
   { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
 }
 
--- Launch Git Bash by default.
+-- Launch Git Bash when opening a new window.
 config.default_prog = {
   'C:\\Program Files\\Git\\bin\\bash.exe',
   '-l',
