@@ -180,6 +180,35 @@ config.key_tables = {
   },
 }
 
+----------------------------------------------------
+-- Status line
+----------------------------------------------------
+-- Surface a pending LEADER and the active key table; without this there is no
+-- way to tell that resize mode is still on. The default 1000ms poll is too
+-- slow to be useful against the 1000ms leader timeout.
+config.status_update_interval = 250
+
+wezterm.on('update-status', function(window, pane)
+  local status = ''
+
+  if window:leader_is_active() then
+    status = 'LEADER'
+  elseif window:active_key_table() == 'resize_pane' then
+    status = 'RESIZE'
+  end
+
+  if status == '' then
+    window:set_right_status ''
+    return
+  end
+
+  window:set_right_status(wezterm.format {
+    { Background = { Color = '#ae8b2d' } },
+    { Foreground = { Color = '#FFFFFF' } },
+    { Text = ' ' .. status .. ' ' },
+  })
+end)
+
 -- Launch Git Bash when opening a new window.
 config.default_prog = {
   'C:\\Program Files\\Git\\bin\\bash.exe',
