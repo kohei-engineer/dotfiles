@@ -209,6 +209,9 @@ wezterm.on('update-status', function(window, pane)
   })
 end)
 
+----------------------------------------------------
+-- Shell
+----------------------------------------------------
 -- Launch Git Bash when opening a new window.
 config.default_prog = {
   'C:\\Program Files\\Git\\bin\\bash.exe',
