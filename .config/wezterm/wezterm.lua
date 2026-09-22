@@ -113,48 +113,71 @@ end)
 -- Use only the key bindings defined below.
 config.disable_default_key_bindings = true
 
+-- Multiplexer operations sit behind LEADER so that they stay identical on
+-- Windows and macOS, and need no arrow, symbol or Fn keys.
+config.leader = { key = 'q', mods = 'CTRL', timeout_milliseconds = 1000 }
+
 config.keys = {
-  -- Ctrl+Shift+N: open a new tab in the home directory.
+  { key = 'h', mods = 'ALT', action = act.ActivatePaneDirection 'Left' },
+  { key = 'j', mods = 'ALT', action = act.ActivatePaneDirection 'Down' },
+  { key = 'k', mods = 'ALT', action = act.ActivatePaneDirection 'Up' },
+  { key = 'l', mods = 'ALT', action = act.ActivatePaneDirection 'Right' },
+
+  -- Split the way vim's :vsplit / :split do.
+  { key = 'v', mods = 'LEADER', action = act.SplitPane { direction = 'Right' } },
+  { key = 's', mods = 'LEADER', action = act.SplitPane { direction = 'Down' } },
+
+  { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane({ confirm = true }) },
+
+  -- Leader+r: enter resize mode; it stays active until Escape or Enter.
   {
-    key = 'N',
-    mods = 'CTRL',
+    key = 'r',
+    mods = 'LEADER',
+    action = act.ActivateKeyTable { name = 'resize_pane', one_shot = false },
+  },
+
+  {
+    key = 'c',
+    mods = 'LEADER',
     action = act.SpawnCommandInNewTab {
       cwd = wezterm.home_dir,
       domain = 'CurrentPaneDomain',
     },
   },
 
-  -- Ctrl+Shift+W: close the current tab after confirmation.
-  { key = 'W', mods = 'CTRL', action = act.CloseCurrentTab({ confirm = true }) },
+  { key = 'n', mods = 'LEADER', action = act.ActivateTabRelative(1) },
+  { key = 'p', mods = 'LEADER', action = act.ActivateTabRelative(-1) },
 
-  -- Ctrl+Shift+R/L/T/B: add a pane to the right/left/top/bottom.
-  { key = 'R', mods = 'CTRL', action = act.SplitPane { direction = 'Right' } },
-  { key = 'L', mods = 'CTRL', action = act.SplitPane { direction = 'Left' } },
-  { key = 'T', mods = 'CTRL', action = act.SplitPane { direction = 'Up' } },
-  { key = 'B', mods = 'CTRL', action = act.SplitPane { direction = 'Down' } },
+  -- Renaming matches tmux's prefix+,. Submitting an empty line clears the name
+  -- and returns to the automatic one.
+  {
+    key = ',',
+    mods = 'LEADER',
+    action = act.PromptInputLine {
+      description = 'New tab name:',
+      action = wezterm.action_callback(function(window, pane, line)
+        if line then
+          window:active_tab():set_title(line)
+        end
+      end),
+    },
+  },
 
-  -- Ctrl+Shift+Arrow: resize the active pane.
-  { key = 'LeftArrow', mods = 'CTRL|SHIFT', action = act.AdjustPaneSize({ 'Left', 1 }) },
-  { key = 'DownArrow', mods = 'CTRL|SHIFT', action = act.AdjustPaneSize({ 'Down', 1 }) },
-  { key = 'UpArrow', mods = 'CTRL|SHIFT', action = act.AdjustPaneSize({ 'Up', 1 }) },
-  { key = 'RightArrow', mods = 'CTRL|SHIFT', action = act.AdjustPaneSize({ 'Right', 1 }) },
+  { key = 'm', mods = 'LEADER', action = act.ActivateCopyMode },
 
-  -- Alt+Arrow: move focus between panes.
-  { key = 'LeftArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Left' },
-  { key = 'DownArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Down' },
-  { key = 'UpArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Up' },
-  { key = 'RightArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Right' },
-
-  -- Ctrl+Tab / Ctrl+Shift+Tab: next/previous tab.
-  { key = 'Tab', mods = 'CTRL', action = act.ActivateTabRelative(1) },
-  { key = 'Tab', mods = 'CTRL|SHIFT', action = act.ActivateTabRelative(-1) },
-
-  -- Ctrl+Shift+M: enter Copy Mode.
-  { key = 'M', mods = 'CTRL', action = act.ActivateCopyMode },
-
-  -- Ctrl+Shift+C / V: copy from / paste to the system clipboard.
   { key = 'C', mods = 'CTRL', action = act.CopyTo 'Clipboard' },
   { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
+}
+
+config.key_tables = {
+  resize_pane = {
+    { key = 'h', action = act.AdjustPaneSize { 'Left', 1 } },
+    { key = 'j', action = act.AdjustPaneSize { 'Down', 1 } },
+    { key = 'k', action = act.AdjustPaneSize { 'Up', 1 } },
+    { key = 'l', action = act.AdjustPaneSize { 'Right', 1 } },
+    { key = 'Escape', action = act.PopKeyTable },
+    { key = 'Enter', action = act.PopKeyTable },
+  },
 }
 
 -- Launch Git Bash when opening a new window.
