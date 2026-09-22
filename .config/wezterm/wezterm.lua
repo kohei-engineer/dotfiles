@@ -2,27 +2,29 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 local act = wezterm.action
 
--- Reload this configuration whenever the file is saved.
 config.automatically_reload_config = true
 
--- Make the window slightly transparent.
+----------------------------------------------------
+-- Window
+----------------------------------------------------
 config.window_background_opacity = 0.9
+
+-- Hide the native title bar while retaining resize handles.
+config.window_decorations = 'RESIZE'
+
+-- Paint the whole window background solid black. The tab bar has no background
+-- of its own (see window_frame below), so this is what shows through it.
+config.window_background_gradient = {
+  colors = { '#000000' },
+}
 
 ----------------------------------------------------
 -- Tab bar
 ----------------------------------------------------
--- Hide the native title bar while retaining resize handles.
-config.window_decorations = 'RESIZE'
-
 -- Blend the tab bar into the window background.
 config.window_frame = {
   inactive_titlebar_bg = 'none',
   active_titlebar_bg = 'none',
-}
-
--- Use black as the tab bar background.
-config.window_background_gradient = {
-  colors = { '#000000' },
 }
 
 -- Hide the default border between inactive tabs; the custom arrows handle separation.
