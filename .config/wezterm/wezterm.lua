@@ -215,4 +215,28 @@ config.default_prog = {
   '-l',
 }
 
+----------------------------------------------------
+-- macOS support
+----------------------------------------------------
+-- Enable the following the first time this config runs on a Mac. Everything
+-- behind LEADER works as-is; only these two spots are OS-dependent.
+--
+-- local is_mac = wezterm.target_triple:find('darwin') ~= nil
+--
+-- 1. Guard default_prog above, because that path does not exist on macOS and
+-- wezterm fails to spawn a shell:
+--
+-- if not is_mac then
+--   config.default_prog = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-l' }
+-- end
+--
+-- 2. Follow the host OS clipboard convention in config.keys, replacing the
+-- Ctrl+Shift+C / V pair:
+--
+-- { key = is_mac and 'c' or 'C', mods = is_mac and 'SUPER' or 'CTRL', action = act.CopyTo 'Clipboard' },
+-- { key = is_mac and 'v' or 'V', mods = is_mac and 'SUPER' or 'CTRL', action = act.PasteFrom 'Clipboard' },
+--
+-- Also note that macOS defaults to zsh and ships bash 3.2, so a current bash
+-- has to be installed separately if shell parity matters.
+
 return config
