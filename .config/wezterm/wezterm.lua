@@ -43,6 +43,45 @@ config.show_close_tab_button_in_tabs = false
 local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
 local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
 
+-- Shells report their working directory as the title, so every tab looks the
+-- same once truncated. Show just the directory name for those; other programs
+-- set a more useful title than we could build, so leave theirs alone.
+local SHELLS = {
+  bash = true,
+  sh = true,
+  zsh = true,
+  fish = true,
+  pwsh = true,
+  powershell = true,
+  cmd = true,
+}
+
+local function basename(path)
+  local trimmed = path:gsub('[/\\]+$', '')
+  local name = trimmed:gsub('.*[/\\]', '')
+  return name
+end
+
+local function tab_name(tab)
+  -- A name set by hand with Leader+, always wins.
+  if tab.tab_title and #tab.tab_title > 0 then
+    return tab.tab_title
+  end
+
+  local pane = tab.active_pane
+  local process = basename(pane.foreground_process_name or '')
+  local shell = process:gsub('%.exe$', '')
+
+  if SHELLS[shell] and pane.current_working_dir then
+    local dir = basename(pane.current_working_dir.file_path)
+    if #dir > 0 then
+      return dir
+    end
+  end
+
+  return pane.title
+end
+
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
   -- Choose the color according to whether the tab is active.
   local background = '#5c6d74'
@@ -53,8 +92,7 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
     background = '#ae8b2d'
   end
 
-  -- Pad and truncate the pane title so it fits in the tab bar.
-  local title = '   ' .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. '   '
+  local title = ' ' .. wezterm.truncate_right(tab_name(tab), max_width - 1) .. ' '
 
   return {
     { Background = { Color = edge_background } },
