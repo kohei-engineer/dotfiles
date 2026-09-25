@@ -5,6 +5,20 @@ local act = wezterm.action
 config.automatically_reload_config = true
 
 ----------------------------------------------------
+-- Font
+----------------------------------------------------
+-- Keep WezTerm's default Latin programming font (JetBrains Mono), but use a
+-- deliberate Japanese fallback instead of leaving CJK glyph selection to the
+-- system fallback order.  A fallback is only used for glyphs the preceding
+-- font does not contain, so Latin text retains JetBrains Mono.
+config.font = wezterm.font_with_fallback {
+  'JetBrains Mono',
+  'BIZ UDGothic',
+}
+-- WezTerm's default is 12.0pt; use a slightly more compact size.
+config.font_size = 11.0
+
+----------------------------------------------------
 -- Window
 ----------------------------------------------------
 config.window_background_opacity = 0.9
