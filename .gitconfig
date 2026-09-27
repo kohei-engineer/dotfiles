@@ -1,0 +1,15 @@
+[include]
+	path = ~/.config/git/user.local
+
+[core]
+	editor = vim
+	quotepath = false
+
+[pull]
+	rebase = true
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false

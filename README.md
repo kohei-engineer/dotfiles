@@ -37,3 +37,14 @@ ls -l "{link path}"
 
 * `->` の後に参照先ファイルのパスが表示されれば成功
 * 必要に応じて設定ファイルの再読み込みを行う
+
+## Git
+
+`.gitconfig` は共有設定のみを管理し、ユーザ設定のみ `~/.config/git/user.local` に配置する。
+
+```sh
+mkdir -p ~/.config/git
+cp "{dotfiles path}/.config/git/user.local.example" ~/.config/git/user.local
+```
+
+* ユーザ設定のみ直接編集が必要
