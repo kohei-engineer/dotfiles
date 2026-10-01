@@ -143,6 +143,9 @@ config.keys = {
 
   { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane({ confirm = true }) },
 
+  -- Alt+hjkl unzooms before moving (unzoom_on_switch_pane defaults to true).
+  { key = 'z', mods = 'LEADER', action = act.TogglePaneZoomState },
+
   -- Leader+r: enter resize mode; it stays active until Escape or Enter.
   {
     key = 'r',
@@ -202,6 +205,16 @@ config.key_tables = {
 -- slow to be useful against the 1000ms leader timeout.
 config.status_update_interval = 250
 
+
+-- Zoom is only exposed as a PaneInformation field, not a Pane method.
+local function zoomed(window)
+  for _, p in ipairs(window:active_tab():panes_with_info()) do
+    if p.is_zoomed then
+      return true
+    end
+  end
+end
+
 wezterm.on('update-status', function(window, pane)
   local status = ''
 
@@ -209,6 +222,8 @@ wezterm.on('update-status', function(window, pane)
     status = 'LEADER'
   elseif window:active_key_table() == 'resize_pane' then
     status = 'RESIZE'
+  elseif zoomed(window) then
+    status = 'ZOOM'
   end
 
   if status == '' then
