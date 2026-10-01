@@ -14,7 +14,5 @@
 [difftool]
 	prompt = false
 
-# Zoom the WezTerm pane while vimdiff runs, then restore it.
-# Outside WezTerm, this runs as a normal vimdiff.
 [difftool "vimdiff-zoom"]
-	cmd = "if [ -n \"$WEZTERM_PANE\" ]; then wezterm cli zoom-pane --pane-id \"$WEZTERM_PANE\" --zoom; fi; vim -d \"$LOCAL\" \"$REMOTE\"; ret=$?; if [ -n \"$WEZTERM_PANE\" ]; then wezterm cli zoom-pane --pane-id \"$WEZTERM_PANE\" --unzoom; fi; exit $ret"
+	cmd = "sh ~/.config/git/vimdiff-zoom.sh \"$LOCAL\" \"$REMOTE\""
