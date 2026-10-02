@@ -9,6 +9,14 @@ path_total=${GIT_DIFF_PATH_TOTAL:-0}
 w=$(command -v wezterm || command -v wezterm.exe)
 pane=${WEZTERM_PANE:-}
 
+# WSL doesn't pass WEZTERM_PANE through, so ask WezTerm for the focused pane.
+# Only needed on the first file (zoom) and the last one (unzoom).
+if [ -z "$pane" ] && [ -n "$w" ] &&
+   { [ "$path_counter" -eq 1 ] || [ "$path_counter" -eq "$path_total" ]; }; then
+    pane=$("$w" cli list-clients --format json |
+        sed -n 's/.*"focused_pane_id": *\([0-9]*\).*/\1/p' | head -n 1)
+fi
+
 if [ "$TERM_PROGRAM" = WezTerm ] && [ -n "$w" ] && [ -n "$pane" ]; then
     if [ "$path_counter" -eq 1 ]; then
         "$w" cli zoom-pane --pane-id "$pane" --zoom
