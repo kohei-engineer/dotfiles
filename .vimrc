@@ -17,11 +17,11 @@ highlight DiffText   cterm=bold ctermfg=NONE ctermbg=24 gui=bold guifg=NONE guib
 " Keep comments readable on both normal and diff backgrounds.
 highlight Comment ctermfg=250 guifg=#bcbcbc
 
-" Highlight leading indentation with a subtle background instead of symbols.
+" Highlight all spaces and tabs with a subtle background instead of symbols.
 set nolist
 highlight WhitespaceBg guibg=#252525 ctermbg=235
 
 augroup WhitespaceBackground
   autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * match WhitespaceBg /^\s\+/
+  autocmd VimEnter,WinEnter,BufWinEnter * match WhitespaceBg /\s\+/
 augroup END
