@@ -17,11 +17,33 @@ highlight DiffText   cterm=bold ctermfg=NONE ctermbg=24 gui=bold guifg=NONE guib
 " Keep comments readable on both normal and diff backgrounds.
 highlight Comment ctermfg=250 guifg=#bcbcbc
 
-" Highlight all spaces and tabs with a subtle background instead of symbols.
+" Keep whitespace invisible, but make indentation and trailing whitespace
+" easy to distinguish by background color.
 set nolist
-highlight WhitespaceBg guibg=#252525 ctermbg=235
+if has('termguicolors')
+  set termguicolors
+endif
 
-augroup WhitespaceBackground
+highlight WhitespaceBg       cterm=NONE ctermbg=235 gui=NONE guibg=#252525
+highlight TrailingWhitespace cterm=NONE ctermbg=88  gui=NONE guibg=#803030
+
+function! HighlightWhitespace() abort
+  " WinEnter/BufWinEnter can run repeatedly for the same window. Remove
+  " the previous matches first so they do not accumulate.
+  if exists('w:whitespace_match_ids')
+    for id in w:whitespace_match_ids
+      silent! call matchdelete(id)
+    endfor
+  endif
+
+  let w:whitespace_match_ids = []
+  " Lower priority: leading indentation on each non-empty whitespace run.
+  call add(w:whitespace_match_ids, matchadd('WhitespaceBg', '^\s\+', 10))
+  " Higher priority: trailing whitespace, including lines containing only spaces.
+  call add(w:whitespace_match_ids, matchadd('TrailingWhitespace', '\s\+$', 20))
+endfunction
+
+augroup WhitespaceHighlight
   autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * match WhitespaceBg /\s\+/
+  autocmd VimEnter,WinEnter,BufWinEnter * call HighlightWhitespace()
 augroup END
