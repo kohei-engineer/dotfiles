@@ -16,3 +16,5 @@
 
 [difftool "vimdiff-zoom"]
 	cmd = "sh ~/.config/git/vimdiff-zoom.sh \"$LOCAL\" \"$REMOTE\""
+[fetch]
+	prune = true
