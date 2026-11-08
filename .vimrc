@@ -8,6 +8,15 @@ augroup END
 set number
 set relativenumber
 
+" Reload files changed outside Vim
+set autoread
+set updatetime=1000
+
+augroup auto_checktime
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * silent! checktime
+augroup END
+
 " Diff colors: unique lines green, missing-line filler red, edits muted.
 highlight DiffAdd    cterm=NONE ctermfg=NONE ctermbg=22 gui=NONE guifg=NONE guibg=#203b28
 highlight DiffDelete cterm=NONE ctermfg=167 ctermbg=52 gui=NONE guifg=#d16969 guibg=#482526
