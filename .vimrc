@@ -8,6 +8,10 @@ augroup END
 set number
 set relativenumber
 
+" Resolve the symlink so this also works when loaded from ~/.vimrc.
+execute 'source ' . fnameescape(fnamemodify(resolve(expand('<sfile>:p')), ':h') . '/.config/vim/glow.vim')
+nnoremap <silent> <Space>p :call GlowPreview()<CR>
+
 " Reload files changed outside Vim
 set autoread
 set updatetime=1000
