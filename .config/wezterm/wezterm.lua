@@ -183,6 +183,7 @@ config.keys = {
   { key = 'm', mods = 'LEADER', action = act.ActivateCopyMode },
 
   { key = 'C', mods = 'CTRL', action = act.CopyTo 'Clipboard' },
+  { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
   { key = 'V', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
 }
 
