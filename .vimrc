@@ -8,6 +8,15 @@ augroup END
 set number
 set relativenumber
 
+" Allow literal underscores and angle brackets in Markdown prose.
+" Clear only these syntax rules in Markdown, preserving HTML validation elsewhere.
+syntax on
+augroup markdown_literal_characters
+  autocmd!
+  autocmd Syntax markdown silent! syntax clear markdownError
+  autocmd Syntax markdown silent! syntax clear htmlError
+augroup END
+
 " Resolve the symlink so this also works when loaded from ~/.vimrc.
 execute 'source ' . fnameescape(fnamemodify(resolve(expand('<sfile>:p')), ':h') . '/.config/vim/glow.vim')
 nnoremap <silent> <Space>p :call GlowPreview()<CR>
